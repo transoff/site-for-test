@@ -1,156 +1,201 @@
 <!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MeroAI</title>
-  <!-- Применяем сохранённую тему как можно раньше, чтобы исключить мигание -->
-  <script>
-    (function() {
-      try {
-        var saved = localStorage.getItem('theme');
-        var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    })();
-  </script>
-  <style>
-    :root {
-      --bg: #0f1419; /* фон по умолчанию (тёмная тема) */
-      --text: #ffffff; /* основной текст */
-      --accent: #1e88e5; /* акцент (синий) */
-      --border: #2b2f36; /* границы в тёмной теме */
-    }
-
-    html[data-theme="light"] {
-      --bg: #f5f5f5; /* фон в светлой теме */
-      --text: #333333; /* текст в светлой теме */
-      --accent: #1e88e5; /* акцент неизменный */
-      --border: #000000; /* чёрные границы в светлой теме */
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-      line-height: 1.5;
-    }
-
-    a { color: var(--accent); }
-
-    header.site-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      background: var(--bg);
-      z-index: 10;
-    }
-
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
-    .brand__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); display: inline-block; }
-
-    button#theme-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease;
-    }
-    button#theme-toggle:hover { background: rgba(255, 255, 255, 0.06); }
-    html[data-theme="light"] button#theme-toggle:hover { background: rgba(0, 0, 0, 0.06); }
-    button#theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    button#theme-toggle svg { width: 18px; height: 18px; }
-
-    .icon { display: none; }
-    html[data-theme="dark"] .icon-moon { display: inline-block; }
-    html[data-theme="light"] .icon-sun { display: inline-block; }
-
-    .sr-only {
-      position: absolute !important;
-      width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0);
-      white-space: nowrap; border: 0;
-    }
-
-    main { padding: 16px; }
-    .card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-  </style>
-</head>
-<body>
-  <header class="site-header" role="banner">
-    <div class="brand">
-      <span class="brand__dot"></span>
-      <span>MeroAI</span>
-    </div>
-    <button id="theme-toggle" type="button" aria-label="Переключить тему" aria-pressed="false">
-      <!-- Иконка для тёмной темы (луна) -->
-      <svg class="icon icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M21.752 15.002a9.718 9.718 0 01-4.75 1.248c-5.385 0-9.75-4.365-9.75-9.75 0-1.71.45-3.317 1.248-4.75a.75.75 0 00-1.097-.935A10.501 10.501 0 1019.82 16.85a.75.75 0 00-.935-1.097h-.001z"/>
-      </svg>
-      <!-- Иконка для светлой темы (солнце) -->
-      <svg class="icon icon-sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M12 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 2zm0 17.5a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75zM4.22 4.22a.75.75 0 011.06 0l1.06 1.06a.75.75 0 11-1.06 1.06L4.22 5.28a.75.75 0 010-1.06zm13.44 13.44a.75.75 0 011.06 0l1.06 1.06a.75.75 0 11-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zM2 12a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 012 12zm17.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 010-1.5zM4.22 19.78a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm13.44-13.44a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zM12 6.75a5.25 5.25 0 100 10.5 5.25 5.25 0 000-10.5z"/>
-      </svg>
-      <span>Тема</span>
-      <span class="sr-only">(переключить тёмная/светлая)</span>
-    </button>
-  </header>
-
-  <main role="main">
-    <div class="card">
-      <p>Добро пожаловать! Переключатель темы находится в шапке справа. Акцентные ссылки, фон, текст и границы меняются согласно выбранной теме.</p>
-      <p><a href="#">Пример ссылки с акцентным цветом</a></p>
-    </div>
-  </main>
-
-  <script>
-    (function() {
-      var btn = document.getElementById('theme-toggle');
-      if (!btn) return;
-
-      function currentTheme() {
-        return document.documentElement.getAttribute('data-theme') || 'dark';
-      }
-
-      function setTheme(next) {
-        document.documentElement.setAttribute('data-theme', next);
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MeroAI Code Repository</title>
+    <meta name="color-scheme" content="light dark" />
+    <!-- Ранняя инициализация темы до загрузки стилей, чтобы минимизировать FOUC -->
+    <script>
+      (function () {
         try {
-          localStorage.setItem('theme', next);
+          var saved = localStorage.getItem('theme');
+          var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark'; // по умолчанию тёмная
+          document.documentElement.setAttribute('data-theme', theme);
         } catch (e) {
-          // Если localStorage недоступен (инкогнито / блокировки), тихо игнорируем
+          // Если localStorage недоступен (например, приватный режим строгий) — по умолчанию тёмная
+          document.documentElement.setAttribute('data-theme', 'dark');
         }
+      })();
+    </script>
+    <style>
+      /*
+        Тема реализована через CSS-переменные. Переключение — атрибут data-theme на <html>.
+        Темы:
+          - dark: фон #0f1419, текст #fff, акцент #1e88e5, границы спокойные серые.
+          - light: фон #f5f5f5, текст #333, акцент #1e88e5, границы чёрные.
+      */
+      :root {
+        --bg: #0f1419;
+        --text: #ffffff;
+        --accent: #1e88e5;
+        --border: #2a2f36; /* приглушённая граница для тёмной темы */
+      }
+      html[data-theme='light'] {
+        --bg: #f5f5f5;
+        --text: #333333;
+        --accent: #1e88e5;
+        --border: #000000; /* требование: чёрные границы в светлой теме */
       }
 
-      function syncAria() {
-        var isLight = currentTheme() === 'light';
-        btn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
-        btn.title = isLight ? 'Переключить на тёмную тему' : 'Переключить на светлую тему';
+      /* Базовые стили */
+      html, body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      btn.addEventListener('click', function() {
-        var next = currentTheme() === 'dark' ? 'light' : 'dark';
-        setTheme(next);
-        syncAria();
-      });
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
 
-      // Инициализируем состояние ARIA
-      syncAria();
-    })();
-  </script>
-</body>
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 16px;
+      }
+
+      /* Шапка сайта */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .site-header__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+      .brand__dot {
+        width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
+      }
+
+      /* Кнопка переключения темы */
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+      }
+      .theme-toggle:hover { border-color: var(--accent); }
+      .theme-toggle:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .theme-toggle__label { font-size: 14px; }
+
+      .icon { width: 18px; height: 18px; display: inline-block; }
+      /* Показываем иконку в зависимости от темы */
+      html[data-theme='dark'] .icon--moon { display: inline-block; }
+      html[data-theme='dark'] .icon--sun { display: none; }
+      html[data-theme='light'] .icon--moon { display: none; }
+      html[data-theme='light'] .icon--sun { display: inline-block; }
+
+      /* Демоконтент (необязательный, для наглядности) */
+      .content { padding: 24px 0 56px; }
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+      }
+      .row { display: flex; gap: 16px; flex-wrap: wrap; }
+      .row .card { flex: 1 1 320px; }
+      code { padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <div class="brand">
+          <span class="brand__dot" aria-hidden="true"></span>
+          <span>MeroAI Code Repository</span>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Переключить тему" title="Переключить тему">
+          <!-- Луна (для тёмной темы показываем её) -->
+          <svg class="icon icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+          </svg>
+          <!-- Солнце (для светлой темы показываем его) -->
+          <svg class="icon icon--sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.8 1.42-1.42zM1 13h3v-2H1v2zm10 10h2v-3h-2v3zm9-10v2h3v-2h-3zm-3.95 7.16l1.41 1.41 1.8-1.79-1.41-1.41-1.8 1.79zM13 1h-2v3h2V1zM4.22 18.36l1.8 1.79 1.41-1.41-1.79-1.8-1.42 1.42zM12 6a6 6 0 100 12 6 6 0 000-12z"/>
+          </svg>
+          <span class="theme-toggle__label">Тема</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="container content">
+      <h1>Добро пожаловать</h1>
+      <p>Этот сайт поддерживает тёмную и светлую тему. Используйте переключатель в шапке.</p>
+      <div class="row">
+        <div class="card">
+          <h3>Акцентные элементы</h3>
+          <p><a href="#">Ссылка с акцентным цветом</a> и <code>границы</code> используют цвета темы.</p>
+        </div>
+        <div class="card">
+          <h3>Сохранение выбора</h3>
+          <p>Выбранная тема сохраняется в <code>localStorage</code> и будет загружена при следующем посещении.</p>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        // Ключ localStorage, где хранится тема
+        var KEY = 'theme';
+
+        // Установка темы: обновляет HTML-атрибут и сохраняет в localStorage
+        function setTheme(theme) {
+          var t = (theme === 'light') ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', t);
+          try { localStorage.setItem(KEY, t); } catch (e) { /* игнорируем ошибки хранения */ }
+          updateButton(t);
+        }
+
+        // Обновляем состояние кнопки: иконка управляется CSS, но подписи/ARIA обновляем тут
+        function updateButton(currentTheme) {
+          var btn = document.getElementById('theme-toggle');
+          if (!btn) return;
+          var next = currentTheme === 'dark' ? 'light' : 'dark';
+          var label = 'Переключить на ' + (next === 'light' ? 'светлую' : 'тёмную') + ' тему';
+          btn.setAttribute('aria-label', label);
+          btn.title = label;
+          // aria-pressed=true будем трактовать как "светлая тема активна"
+          btn.setAttribute('aria-pressed', String(currentTheme === 'light'));
+        }
+
+        // Инициализация кнопки и обработчика
+        document.addEventListener('DOMContentLoaded', function () {
+          var btn = document.getElementById('theme-toggle');
+          if (!btn) return;
+          var current = document.documentElement.getAttribute('data-theme') || 'dark';
+          updateButton(current);
+          btn.addEventListener('click', function () {
+            var theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            setTheme(theme);
+          });
+        });
+      })();
+    </script>
+  </body>
 </html>
