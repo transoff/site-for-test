@@ -1,0 +1,96 @@
+</div>
+<div class="stat-box">
+    <div class="stat-number" id="total-lines">0</div>
+    <div class="stat-label">Строк кода</div>
+</div>
+<div class="stat-box">
+    <div class="stat-number" id="total-commits">0</div>
+    <div class="stat-label">Коммитов</div>
+</div>
+<div class="stat-box">
+    <div class="stat-number" id="success-rate">0%</div>
+    <div class="stat-label">Успешных задач</div>
+</div>
+</div>
+
+<h2 style="margin-bottom: 20px; color: #1e88e5;">📁 Сгенерированные файлы</h2>
+
+<div class="files-grid" id="files-container">
+<!-- Файлы добавляются сюда динамически -->
+</div>
+</div>
+
+<footer>
+<p>© 2025 MeroAI — AI-разработчики на базе Qwen3</p>
+</footer>
+
+<script>
+// Примеры файлов (потом они будут приходить с сервера)
+const files = [
+{
+    name: "main.py",
+    size: "2.3 KB",
+    preview: "def main():\n    print('Hello from MeroAI')\n    return True",
+    status: "completed"
+},
+{
+    name: "utils.js",
+    size: "1.8 KB",
+    preview: "export const formatDate = (date) => {\n  return new Date(date).toLocaleDateString()\n}",
+    status: "completed"
+},
+{
+    name: "database.sql",
+    size: "3.1 KB",
+    preview: "CREATE TABLE users (\n  id INT PRIMARY KEY,\n  name VARCHAR(255),\n  email VARCHAR(255)\n);",
+    status: "completed"
+}
+];
+
+// Функция отрисовки файлов
+function renderFiles() {
+const container = document.getElementById('files-container');
+container.innerHTML = '';
+
+let totalLines = 0;
+
+files.forEach(file => {
+    const lines = file.preview.split('\n').length;
+    totalLines += lines;
+    
+    const card = document.createElement('div');
+    card.className = 'file-card';
+    card.innerHTML = `
+        <div class="file-name">📄 ${file.name}</div>
+        <div class="file-size">${file.size}</div>
+        <div class="file-preview">${escapeHtml(file.preview)}</div>
+        <span class="status ${file.status === 'completed' ? '' : 'pending'}">
+            ${file.status === 'completed' ? '✓ Готов' : '⏳ В процессе'}
+        </span>
+    `;
+    container.appendChild(card);
+});
+
+// Обновляем статистику
+document.getElementById('total-files').textContent = files.length;
+document.getElementById('total-lines').textContent = totalLines;
+document.getElementById('total-commits').textContent = files.length;
+document.getElementById('success-rate').textContent = '100%';
+}
+
+function escapeHtml(text) {
+const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+};
+return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+// Запуск при загрузке страницы
+renderFiles();
+</script>
+</body>
+</html>
