@@ -1,201 +1,383 @@
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MeroAI Code Repository</title>
-    <meta name="color-scheme" content="light dark" />
-    <!-- Ранняя инициализация темы до загрузки стилей, чтобы минимизировать FOUC -->
-    <script>
-      (function () {
-        try {
-          var saved = localStorage.getItem('theme');
-          var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark'; // по умолчанию тёмная
-          document.documentElement.setAttribute('data-theme', theme);
-        } catch (e) {
-          // Если localStorage недоступен (например, приватный режим строгий) — по умолчанию тёмная
-          document.documentElement.setAttribute('data-theme', 'dark');
-        }
-      })();
-    </script>
-    <style>
-      /*
-        Тема реализована через CSS-переменные. Переключение — атрибут data-theme на <html>.
-        Темы:
-          - dark: фон #0f1419, текст #fff, акцент #1e88e5, границы спокойные серые.
-          - light: фон #f5f5f5, текст #333, акцент #1e88e5, границы чёрные.
-      */
-      :root {
-        --bg: #0f1419;
-        --text: #ffffff;
-        --accent: #1e88e5;
-        --border: #2a2f36; /* приглушённая граница для тёмной темы */
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Цветочный магазин — Лёгкий заказ букетов</title>
+  <meta name="description" content="Одностраничный лендинг цветочного магазина: каталог букетов и простая форма заказа. Светлая/тёмная тема, удобный интерфейс." />
+  <script>
+    // Ранняя инициализация темы до загрузки стилей, чтобы избежать мерцания неправильной темы
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var theme = saved === 'light' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        // Если localStorage недоступен, используем тему по умолчанию (dark)
+        document.documentElement.setAttribute('data-theme', 'dark');
       }
-      html[data-theme='light'] {
-        --bg: #f5f5f5;
-        --text: #333333;
-        --accent: #1e88e5;
-        --border: #000000; /* требование: чёрные границы в светлой теме */
-      }
+    })();
+  </script>
+  <style>
+    /*
+      ТЕМЫ: используем CSS-переменные и переключение по атрибуту [data-theme]
+      По умолчанию тёмная тема; светлая переопределяет цвета.
+    */
+    :root {
+      --bg: #0f1419;
+      --bg-elev: #141b22;
+      --text: #ffffff;
+      --muted: #c9d1d9;
+      --primary: #1e88e5;
+      --primary-contrast: #ffffff;
+      --outline: #26323f;
+      --success: #2ea043;
+      --danger: #d32f2f;
+      --card-bg: #111820;
+      --shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    [data-theme="light"] {
+      --bg: #f5f5f5;
+      --bg-elev: #ffffff;
+      --text: #333333;
+      --muted: #444444;
+      --primary: #1e88e5;
+      --primary-contrast: #ffffff;
+      --outline: #000000;
+      --success: #1b873e;
+      --danger: #c62828;
+      --card-bg: #ffffff;
+      --shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
 
-      /* Базовые стили */
-      html, body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
+    /* Базовые стили */
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
 
-      a { color: var(--accent); text-decoration: none; }
-      a:hover { text-decoration: underline; }
+    /* Header */
+    header.site-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--outline);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 12px 0;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);
+    }
+    .brand .logo {
+      width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+      background: var(--primary); color: var(--primary-contrast); border-radius: 6px; font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+    .brand span { font-weight: 700; letter-spacing: 0.2px; }
+    nav.links { display: flex; align-items: center; gap: 14px; }
+    nav.links a { color: var(--muted); text-decoration: none; font-weight: 500; }
+    nav.links a:hover { color: var(--text); }
+    .actions { display: flex; align-items: center; gap: 10px; }
 
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 16px;
-      }
+    .icon-btn {
+      border: 1px solid var(--outline); background: var(--bg-elev); color: var(--text);
+      width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 10px; cursor: pointer;
+    }
+    .icon-btn:hover { border-color: var(--primary); }
+    .icon { width: 22px; height: 22px; display: block; }
+    .icon-sun { display: none; }
+    html[data-theme="light"] .icon-sun { display: block; }
+    html[data-theme="light"] .icon-moon { display: none; }
 
-      /* Шапка сайта */
-      .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-      }
-      .site-header__inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 56px;
-      }
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 600;
-        letter-spacing: 0.2px;
-      }
-      .brand__dot {
-        width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
-      }
+    /* Hero */
+    .hero {
+      padding: 56px 0 28px;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr; gap: 22px; align-items: center;
+      padding: 16px 0;
+    }
+    .hero h1 { font-size: 36px; line-height: 1.2; margin: 0; }
+    .hero p.lead { color: var(--muted); margin: 6px 0 14px; font-size: 18px; }
+    .cta { display: flex; gap: 12px; flex-wrap: wrap; }
 
-      /* Кнопка переключения темы */
-      .theme-toggle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        height: 36px;
-        padding: 0 12px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        background: transparent;
-        color: var(--text);
-        cursor: pointer;
-        transition: border-color 0.15s ease, background-color 0.15s ease;
-      }
-      .theme-toggle:hover { border-color: var(--accent); }
-      .theme-toggle:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
-      .theme-toggle__label { font-size: 14px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 18px; border-radius: 12px; cursor: pointer; text-decoration: none;
+      font-weight: 600; border: 1px solid transparent;
+    }
+    .btn.primary { background: var(--primary); color: var(--primary-contrast); }
+    .btn.primary:hover { filter: brightness(1.05); }
+    .btn.secondary { background: var(--bg-elev); color: var(--text); border-color: var(--outline); }
+    .btn.secondary:hover { border-color: var(--primary); }
 
-      .icon { width: 18px; height: 18px; display: inline-block; }
-      /* Показываем иконку в зависимости от темы */
-      html[data-theme='dark'] .icon--moon { display: inline-block; }
-      html[data-theme='dark'] .icon--sun { display: none; }
-      html[data-theme='light'] .icon--moon { display: none; }
-      html[data-theme='light'] .icon--sun { display: inline-block; }
+    /* Sections */
+    section { padding: 28px 0; }
+    section h2 { margin: 0 0 14px; font-size: 26px; }
+    .section-card {
+      background: var(--bg-elev); border: 1px solid var(--outline); border-radius: 16px; padding: 16px; box-shadow: var(--shadow);
+    }
 
-      /* Демоконтент (необязательный, для наглядности) */
-      .content { padding: 24px 0 56px; }
-      .card {
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 16px;
-      }
-      .row { display: flex; gap: 16px; flex-wrap: wrap; }
-      .row .card { flex: 1 1 320px; }
-      code { padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; }
-    </style>
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container site-header__inner">
-        <div class="brand">
-          <span class="brand__dot" aria-hidden="true"></span>
-          <span>MeroAI Code Repository</span>
-        </div>
-        <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Переключить тему" title="Переключить тему">
-          <!-- Луна (для тёмной темы показываем её) -->
-          <svg class="icon icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
-          </svg>
-          <!-- Солнце (для светлой темы показываем его) -->
-          <svg class="icon icon--sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.8 1.42-1.42zM1 13h3v-2H1v2zm10 10h2v-3h-2v3zm9-10v2h3v-2h-3zm-3.95 7.16l1.41 1.41 1.8-1.79-1.41-1.41-1.8 1.79zM13 1h-2v3h2V1zM4.22 18.36l1.8 1.79 1.41-1.41-1.79-1.8-1.42 1.42zM12 6a6 6 0 100 12 6 6 0 000-12z"/>
-          </svg>
-          <span class="theme-toggle__label">Тема</span>
+    /* Catalog */
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card-bg); border: 1px solid var(--outline); border-radius: 14px; overflow: hidden;
+      display: flex; flex-direction: column; height: 100%;
+    }
+    .card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+    .card .info { padding: 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .card .title { font-weight: 700; }
+    .price { color: var(--muted); font-weight: 600; }
+
+    /* Form */
+    form { display: grid; gap: 12px; }
+    .field { display: grid; gap: 6px; }
+    label { font-weight: 600; }
+    input[type="text"], input[type="tel"], input[type="email"], input[type="date"], input[type="time"], textarea, select {
+      background: var(--bg-elev); color: var(--text);
+      border: 1px solid var(--outline); border-radius: 10px; padding: 10px 12px;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,136,229,0.2); }
+    .muted { color: var(--muted); font-size: 13px; }
+    .inline { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    /* Radios */
+    .radio-group { display: flex; gap: 12px; flex-wrap: wrap; }
+    .radio {
+      display: inline-flex; align-items: center; gap: 6px; background: var(--bg-elev); border: 1px solid var(--outline);
+      padding: 8px 12px; border-radius: 999px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+      background: var(--success); color: #fff; padding: 12px 16px; border-radius: 10px; box-shadow: var(--shadow);
+      opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease;
+    }
+    .toast.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(-6px); }
+
+    /* Footer */
+    footer { padding: 26px 0 40px; color: var(--muted); border-top: 1px solid var(--outline); margin-top: 24px; }
+    .contact { display: flex; gap: 10px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="visually-hidden">Перейти к основному содержимому</a>
+  <header class="site-header" role="banner">
+    <div class="container nav">
+      <a href="#" class="brand" aria-label="Цветочный магазин, на главную">
+        <span class="logo" aria-hidden="true">F</span>
+        <span>Цветочный магазин</span>
+      </a>
+      <nav class="links" aria-label="Навигация">
+        <a href="#catalog">Каталог</a>
+        <a href="#order">Создать заказ</a>
+      </nav>
+      <div class="actions">
+        <button id="themeToggle" class="icon-btn" aria-label="Переключить тему" title="Тема">
+          <!-- Иконки: показываем одну в зависимости от текущей темы -->
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.8 1.42-1.42zm10.48 0l1.79-1.8-1.41-1.41-1.8 1.79 1.42 1.42zM12 4V1h-1v3h1zm0 19v-3h-1v3h1zm9-10h-3v1h3v-1zM6 13H3v-1h3v1zm12.24 6.16l1.8 1.79 1.41-1.41-1.79-1.8-1.42 1.42zM4.84 17.24l-1.79 1.8 1.41 1.41 1.8-1.79-1.42-1.42zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.74 2a9 9 0 108.77 11.49A7.5 7.5 0 0112.74 2z"/></svg>
         </button>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main class="container content">
-      <h1>Добро пожаловать</h1>
-      <p>Этот сайт поддерживает тёмную и светлую тему. Используйте переключатель в шапке.</p>
-      <div class="row">
-        <div class="card">
-          <h3>Акцентные элементы</h3>
-          <p><a href="#">Ссылка с акцентным цветом</a> и <code>границы</code> используют цвета темы.</p>
-        </div>
-        <div class="card">
-          <h3>Сохранение выбора</h3>
-          <p>Выбранная тема сохраняется в <code>localStorage</code> и будет загружена при следующем посещении.</p>
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-inner section-card">
+        <div>
+          <h1>Свежие цветы с любовью — закажите букет онлайн</h1>
+          <p class="lead">Подберём идеальный букет для любого повода. Быстро, красиво и с заботой. Светлая/тёмная тема — на ваш вкус.</p>
+          <div class="cta">
+            <a id="ctaOrder" class="btn primary" href="#order">Создать заказ</a>
+            <a class="btn secondary" href="#catalog">Каталог</a>
+          </div>
         </div>
       </div>
-    </main>
+    </section>
 
-    <script>
-      (function () {
-        // Ключ localStorage, где хранится тема
-        var KEY = 'theme';
+    <section id="catalog" aria-labelledby="catalog-title">
+      <div class="container">
+        <h2 id="catalog-title">Каталог</h2>
+        <div class="grid">
+          <figure class="card">
+            <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783?auto=format&fit=crop&w=1200&q=80" alt="Классический букет красных роз" />
+            <figcaption class="info">
+              <div class="title">Красные розы</div>
+              <div class="price">от 1 900 ₽</div>
+            </figcaption>
+          </figure>
+          <figure class="card">
+            <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1200&q=80" alt="Весенний букет тюльпанов разных цветов" />
+            <figcaption class="info">
+              <div class="title">Тюльпаны</div>
+              <div class="price">от 1 200 ₽</div>
+            </figcaption>
+          </figure>
+          <figure class="card">
+            <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80" alt="Нежные белые ромашки крупным планом" />
+            <figcaption class="info">
+              <div class="title">Ромашки</div>
+              <div class="price">от 900 ₽</div>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
 
-        // Установка темы: обновляет HTML-атрибут и сохраняет в localStorage
-        function setTheme(theme) {
-          var t = (theme === 'light') ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', t);
-          try { localStorage.setItem(KEY, t); } catch (e) { /* игнорируем ошибки хранения */ }
-          updateButton(t);
+    <section id="order" aria-labelledby="order-title">
+      <div class="container">
+        <h2 id="order-title">Создать заказ</h2>
+        <div class="section-card">
+          <form id="orderForm" novalidate>
+            <div class="field">
+              <label for="name">Имя *</label>
+              <input id="name" name="name" type="text" placeholder="Как к вам обращаться" required minlength="2" />
+            </div>
+
+            <div class="field">
+              <label for="phone">Телефон *</label>
+              <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="+7 900 000-00-00" required pattern="^\+?\d[\d\s\-()]{9,}$" />
+              <span class="muted">Формат: +7 900 000-00-00</span>
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="name@example.com" />
+            </div>
+
+            <div class="field">
+              <label for="bouquet">Тип букета *</label>
+              <select id="bouquet" name="bouquet" required>
+                <option value="" disabled selected>Выберите вариант</option>
+                <option value="roses">Розы</option>
+                <option value="tulips">Тюльпаны</option>
+                <option value="daisies">Ромашки</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <span>Размер</span>
+              <div class="radio-group" role="radiogroup" aria-label="Размер букета">
+                <label class="radio"><input type="radio" name="size" value="S" /> S</label>
+                <label class="radio"><input type="radio" name="size" value="M" checked /> M</label>
+                <label class="radio"><input type="radio" name="size" value="L" /> L</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="address">Адрес доставки</label>
+              <input id="address" name="address" type="text" placeholder="Город, улица, дом, квартира" />
+            </div>
+
+            <div class="field">
+              <label for="comment">Комментарий</label>
+              <textarea id="comment" name="comment" rows="3" placeholder="Пожелания к букету, время доставки и т. п."></textarea>
+            </div>
+
+            <div class="field">
+              <label class="inline"><input type="checkbox" id="agree" required /> Согласен с обработкой персональных данных *</label>
+            </div>
+
+            <div class="inline">
+              <button type="submit" class="btn primary">Отправить заказ</button>
+              <button type="reset" class="btn secondary">Очистить</button>
+              <span class="muted">Поля, отмеченные *, обязательны</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <footer>
+    <div class="container">
+      <div class="contact">
+        <span>© 2025 Цветочный магазин</span>
+        <span>·</span>
+        <span>Тел.: +7 (900) 000-00-00</span>
+        <span>·</span>
+        <span>Email: flowers@example.com</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Переключение темы с сохранением в localStorage
+    (function themeToggleInit() {
+      var btn = document.getElementById('themeToggle');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+    })();
+
+    // Переход к форме с установкой фокуса на первое обязательное поле
+    (function orderFocusInit() {
+      var cta = document.getElementById('ctaOrder');
+      if (!cta) return;
+      cta.addEventListener('click', function (e) {
+        // Дадим времени на скролл, затем сфокусируем поле
+        setTimeout(function () {
+          var nameInput = document.getElementById('name');
+          if (nameInput) nameInput.focus();
+        }, 300);
+      });
+    })();
+
+    // Обработка формы: базовая валидация + тост об успехе
+    (function formInit() {
+      var form = document.getElementById('orderForm');
+      var toast = document.getElementById('toast');
+      if (!form || !toast) return;
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(function () { toast.classList.remove('show'); }, 3200);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // HTML5 валидация: если не валидно — даст браузерные подсказки
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
         }
 
-        // Обновляем состояние кнопки: иконка управляется CSS, но подписи/ARIA обновляем тут
-        function updateButton(currentTheme) {
-          var btn = document.getElementById('theme-toggle');
-          if (!btn) return;
-          var next = currentTheme === 'dark' ? 'light' : 'dark';
-          var label = 'Переключить на ' + (next === 'light' ? 'светлую' : 'тёмную') + ' тему';
-          btn.setAttribute('aria-label', label);
-          btn.title = label;
-          // aria-pressed=true будем трактовать как "светлая тема активна"
-          btn.setAttribute('aria-pressed', String(currentTheme === 'light'));
+        var name = (document.getElementById('name').value || '').trim();
+        var bouquetEl = document.getElementById('bouquet');
+        var bouquetText = '';
+        if (bouquetEl) {
+          var opt = bouquetEl.options[bouquetEl.selectedIndex];
+          bouquetText = opt ? opt.text : '';
         }
 
-        // Инициализация кнопки и обработчика
-        document.addEventListener('DOMContentLoaded', function () {
-          var btn = document.getElementById('theme-toggle');
-          if (!btn) return;
-          var current = document.documentElement.getAttribute('data-theme') || 'dark';
-          updateButton(current);
-          btn.addEventListener('click', function () {
-            var theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            setTheme(theme);
-          });
-        });
-      })();
-    </script>
-  </body>
+        // Псевдо-отправка (демо): показать тост, очистить форму
+        showToast('Спасибо, ' + name + '! Заказ на букет ("' + bouquetText + '") создан. Мы свяжемся с вами.');
+        form.reset();
+      });
+    })();
+  </script>
+</body>
 </html>
